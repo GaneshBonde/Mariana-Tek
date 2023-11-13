@@ -16,6 +16,9 @@ There should be one filter and one search. The filter should be by Genre. It sho
 
 The search should be by Title. It's should be a text input that, with each character, shows each movie that matches the current string and hides each movie that doesn't.
 
+# Important Note
+This solution is shared to public for learning purposes. This solution cannot be used for commercial use. If anybody want to use this solution or code for commercial purposes will have to contact me at ganeshbonde@gmail.com.
+
 ## Example
 
 ![Example Image](https://d1jfzjx68gj8xs.cloudfront.net/items/3q0I2N250A3m32321y2O/Screen%20Shot%202019-06-20%20at%206.44.02%20PM.png)
