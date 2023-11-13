@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale-1.0">
+        <title>Demo</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" 
+        rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    </head>
+    <body onload="moviePageLoad()">
+        <script>
+
+          var movieIds = JSON.parse('{"He Got Game":"1","Babylon":"2","Rockers":"3","Vice":"4","Magnolia":"5","Crouching Tiger, Hidden Dragon":"6","Punch-Drunk Love":"7","Lords Of Chaos":"8","Paris, Texas":"9","Odd Man Out":"10","Death Force":"11","Days Of Heaven":"12"}');
+
+          var movieList = ["He Got Game","Babylon","Rockers","Vice","Magnolia","Crouching Tiger, Hidden Dragon","Punch-Drunk Love","Lords Of Chaos","Paris, Texas","Odd Man Out","Death Force","Days Of Heaven"];
+
+          var calendarData = JSON.parse('{"He Got Game":"JUN_2019","Babylon":"JUN_2019","Rockers":"JUN_2019","Vice":"MAY_2019","Magnolia":"MAY_2019","Crouching Tiger, Hidden Dragon":"MAY_2019","Punch-Drunk Love":"MAY_2019","Lords Of Chaos":"APR_2019","Paris, Texas":"APR_2019","Odd Man Out":"APR_2019","Death Force":"APR_2019","Days Of Heaven":"APR_2019"}');
+
+          var jsonData =JSON.parse('{"MovieData":[{"He Got Game":["Drama","Sport"]},{"Babylon":["Comedy","Drama","History"]},{"Rockers":["Comedy","Drama","Music"]},{"Vice":["Biography","Comedy","Drama"]},{"Magnolia":["Drama"]},{"Crouching Tiger, Hidden Dragon":["Action","Adventure","Drama","Fantasy","Romance"]},{"Punch-Drunk Love":["Comedy","Drama","Romance","Thriller"]},{"Lords Of Chaos":["Biography","Drama","Horror","Music","Thriller"]},{"Paris, Texas":["Romance"]},{"Odd Man Out":["Drama"]},{"Death Force":["Action","Thriller"]},{"Days Of Heaven":["Romance","Drama"]}]}');
+
+          var calendarArray = [];
+
+          var genreFilters = new Map([
+                                  ["He Got Game", 2],
+                                  ["Babylon", 3],
+                                  ["Rockers", 3],
+                                  ["Vice", 3],
+                                  ["Magnolia", 1],
+                                  ["Crouching Tiger, Hidden Dragon", 5],
+                                  ["Punch-Drunk Love", 4],
+                                  ["Lords Of Chaos", 5],
+                                  ["Paris, Texas", 1],
+                                  ["Odd Man Out", 1],
+                                  ["Death Force", 2],
+                                  ["Days Of Heaven", 2]
+                                ]);
+
+          function selectAllMovies(checkboxArray){
+          
+             var selectAllcheckbox = document.querySelector("Input[id = 'selectAllGenre']") ;
+             var checkboxes = document.querySelectorAll("Input[id = 'myGenre']") ;
+             
+             if(selectAllcheckbox.checked== true){
+              checkboxes.forEach(function(checkbox){
+                checkbox.checked = true;
+              });
+            }else{
+              checkboxes.forEach(function(checkbox){
+                checkbox.checked = false;
+              });
+            }
+
+            if(selectAllcheckbox.checked== true){
+              calendarArray = [];
+              for (var i = 0; i < movieList.length; i++) {
+                var movieName = movieList[i]; 
+                document.getElementById(movieIds[movieName]).hidden = false;
+                var calendarId = calendarData[movieName];
+                var calendarDivId="calendar_"+(i+1);
+                if(calendarArray.includes(calendarId)){
+                    document.getElementById(calendarDivId).style.visibility="hidden";
+                }else{
+                    calendarArray.push(calendarId);
+                    document.getElementById(calendarDivId).style.visibility="visible";
+                }
+              }
+              
+              genreFilters = new Map([
+                                  ["He Got Game", 2],
+                                  ["Babylon", 3],
+                                  ["Rockers", 3],
+                                  ["Vice", 3],
+                                  ["Magnolia", 1],
+                                  ["Crouching Tiger, Hidden Dragon", 5],
+                                  ["Punch-Drunk Love", 4],
+                                  ["Lords Of Chaos", 5],
+                                  ["Paris, Texas", 1],
+                                  ["Odd Man Out", 1],
+                                  ["Death Force", 2],
+                                  ["Days Of Heaven", 2]
+                                ]);
+
+            }else{
+              for (var i = 0; i < movieList.length; i++) {
+                var movieName = movieList[i]; 
+                document.getElementById(movieIds[movieName]).hidden = true;
+              } 
+               genreFilters = new Map([
+                                  ["He Got Game", 0],
+                                  ["Babylon", 0],
+                                  ["Rockers", 0],
+                                  ["Vice", 0],
+                                  ["Magnolia", 0],
+                                  ["Crouching Tiger, Hidden Dragon", 0],
+                                  ["Punch-Drunk Love", 0],
+                                  ["Lords Of Chaos", 0],
+                                  ["Paris, Texas", 0],
+                                  ["Odd Man Out", 0],
+                                  ["Death Force", 0],
+                                  ["Days Of Heaven", 0]
+                                ]); 
+            }
+
+          }
+
+          function selectMovies(checkboxGenre){
+      
+             var selectAllcheckbox = document.querySelector("Input[id = 'selectAllGenre']") ;
+             var checkboxes = document.querySelectorAll("Input[id = 'myGenre']") ;
+             var genre = checkboxGenre.value;
+             
+             selectAllcheckbox.checked = false;
+            for (var i = 0; i < movieList.length; i++) {
+              var movieName = movieList[i]; 
+              
+              var eachMovieGenre = jsonData.MovieData[i];
+              var genreArray = Object.values(eachMovieGenre)[0];
+              var genrePresent = false;
+              for (var j = 0; j < genreArray.length; j++) {
+
+                  if(genreArray[j]==genre){
+                    genrePresent=true;
+                    break;
+                  }
+
+              }
+              
+           
+                if(genrePresent){
+                    
+                    if(checkboxGenre.checked==true){
+                      genreFilters.set(movieName,genreFilters.get(movieName)+1);
+                      document.getElementById(movieIds[movieName]).hidden = false;
+                    }else if(genreFilters.get(movieName)==1){
+                      genreFilters.set(movieName,genreFilters.get(movieName)-1);
+                      document.getElementById(movieIds[movieName]).hidden = true;
+                    }else{
+                      genreFilters.set(movieName,genreFilters.get(movieName)-1);
+                    }
+                    
+
+                    if(checkboxGenre.checked==true){
+                      var calendarId = calendarData[movieName];
+                      var calendarDivId="calendar_"+(i+1);
+                      if(calendarArray.includes(calendarId)){
+                        document.getElementById(calendarDivId).style.visibility="hidden";
+                      }else{
+                        calendarArray.push(calendarId);
+                        document.getElementById(calendarDivId).style.visibility="visible";
+                      }
+
+                    }
+                }else{
+   
+                }
+                let text = "";
+                for (const x of genreFilters.entries()) {
+                  text += x + " ";
+                }
+
+                console.log("Genric filter count "+text);
+            }
+
+          }
+
+          function searchTitle(searchText){
+
+            var selectAllcheckbox = document.querySelector("Input[id = 'selectAllGenre']") ;
+            var checkboxes = document.querySelectorAll("Input[id = 'myGenre']") ;
+
+            selectAllcheckbox.checked=false;
+
+            checkboxes.forEach(function(checkbox){
+                checkbox.checked = false;
+              });
+
+            calendarArray = [];
+            for (var i = 0; i < movieList.length; i++) {
+              var movieName = movieList[i]; 
+           
+                if(movieName.includes(searchText)){
+                    document.getElementById(movieIds[movieName]).hidden = false;
+                    var calendarId = calendarData[movieName];
+                    var calendarDivId="calendar_"+(i+1);
+                    if(calendarArray.includes(calendarId)){
+                     
+           
+                      document.getElementById(calendarDivId).style.visibility="hidden";
+                    }else{
+           
+                      calendarArray.push(calendarId);
+                      document.getElementById(calendarDivId).style.visibility="visible";
+                    }
+                }else{
+                    document.getElementById(movieIds[movieName]).hidden = true;
+                }
+            }
+          }
+          function moviePageLoad(){
+       
+            var calendarArray = [];
+            for (var i = 0; i < movieList.length; i++) {
+              var movieName = movieList[i]; 
+      
+              
+                   
+                    var calendarId = calendarData[movieName];
+                    
+                    if(calendarArray.includes(calendarId)){
+      
+                      document.getElementById("calendar_"+(i+1)).style.visibility="hidden";
+                    }else{
+                       calendarArray.push(calendarId);
+                    }
+                
+            }
+
+            var input = document.getElementById("search");
+
+            // Execute a function when the user presses a key on the keyboard
+            input.addEventListener("keypress", function(event) {
+              // If the user presses the "Enter" key on the keyboard
+              if (event.key === "Enter") {
+                // Cancel the default action, if needed
+                event.preventDefault();
+                // Trigger the button element with a click
+                searchTitle(document.getElementById("search").value);
+              }
+            });
+          }
+          
+         
+        </script>
+        <style>
+            .my-custom-row {
+                background-color: bisque;
+                height: 400px;
+            }
+
+            #menu{
+                list-style: none;
+            }
+            #menu li{
+                display: inline;
+                padding: 0 10px;
+                border-left: solid 1px black;
+            }
+            #menu li:first-child{
+                border-left: none;
+            }
+
+            .menu-bar{
+               
+                margin-left: 2rem;
+                margin-right: 5rem;
+            }
+            .calendar{
+              background-image: url('calendar.gif');
+              background-repeat: no-repeat;
+              background-size: contain;
+              height: 90px;
+              background-position: left;
+              text-align: center;
+
+
+            
+            }
+            
+        </style>
+       
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" 
+         integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" 
+        integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
+        <!---------------------------------------------------------------------------------------------------------------------------------------------------------------->
+        <div class="bg-dark">
+          <!------------------------------------------------------------------------------------------------------------------------------------------------------------------>
+          <nav class="navbar navbar-expand-sm navbar-dark bg-dark ">
+            <div class="container-fluid" >
+              <a class="navbar-brand col-5" href="#">
+                <img src="logo.gif" alt="Logoo" style="width:300px;" class="rounded-pill">
+              </a>
+              
+              <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mynavbar">
+                <span class="navbar-toggler-icon"></span>
+              </button>
+
+             
+              <div class="collapse navbar-collapse text-white " id="mynavbar">
+                <ul class="navbar-nav me-auto " >
+                  <li class="col-2">
+                    <a class="navbar-brand menu-bar align-items-md-end" href="#">
+                      <img src="profile-pic.gif" alt="Logoo" style="width:50px;height: 50px;" class="rounded-pill">
+                    </a>
+                  </li>
+                  <li class="nav-item dropdown" >
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" >
+                      PROOF757
+                    </a>
+                  </li>
+                  <li class="nav-item text-light">
+                    <a class="nav-link" href="javascript:void(0)">ACTIVITY</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="javascript:void(0)">FILMS</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="javascript:void(0)">LISTS</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="javascript:void(0)">PEOPLE</a>
+                  </li>
+                 
+                </ul>
+                <form class="d-flex">
+                  <input class="form-control me-2" type="text" placeholder="Search" id="search">
+                  <img src="search.gif" alt="Logo" style="width:50px;height: 50px;" onclick='searchTitle(document.getElementById("search").value)' >
+                </form>
+                <div class="col-3 text-white h6 p-4">
+                  <img src="log.gif" alt="Logo" style="width:200px;height: 50px;"  >
+                  
+                  </div>
+              </div>
+            </div>
+          </nav>
+          <!------------------------------------------------------------------------------------------------------------------------------------------------------------------>
+          
+          <nav class="navbar navbar-expand-lg navbar-dark bg-dark menu-bar">
+            <div class="container-fluid navbar-light bg-gradient">
+              <a class="navbar-brand menu-bar" href="#">
+                <img src="profile-pic.gif" alt="Logoo" style="width:50px;height: 50px;" class="rounded-pill">
+              </a>
+              <a class="navbar-brand" href="#">roc Hudson</a>
+              <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+              </button>
+              
+              <ul class="navbar-nav me-auto" id="menu">
+               
+                <li class="nav-item text-light">
+                  <a class="nav-link" href="javascript:void(0)">Activity</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="javascript:void(0)">Films</a>
+                </li>
+                <li class="nav-item navbar-light bg-light ">
+                  <a class="nav-link text-dark" href="javascript:void(0)">Diary</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="javascript:void(0)">Reviews</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="javascript:void(0)">Watchlist</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="javascript:void(0)">Lists</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="javascript:void(0)">Likes</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="javascript:void(0)">Tag</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="javascript:void(0)">Network</a>
+                </li>
+              </ul>
+             
+            </div>
+          </nav>
+
+          <!------------------------------------------------------------------------------------------------------------------------------------------------------------------>
+
+          <nav class="navbar navbar-expand-lg navbar-dark bg-dark menu-bar">
+            <div class="container-fluid navbar-light ">
+             
+             
+              <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                  <li class="nav-item">
+                    <a class="nav-link active text-success" aria-current="page" href="#">WATCHED</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link active text-decoration-underline" aria-current="page" href="#">DIARY</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link text-success" href="#">REVIEWS</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link text-success" href="#">RATINGS</a>
+                  </li>
+                 
+                  <li class="nav-item dropdown" style="padding-left: 100px">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                      Genre
+                    </a>
+                    <ul class="dropdown-menu " aria-labelledby="navbarDropdown">
+                      <li>
+                        <input class="form-check-input" type="checkbox" value="1" id="selectAllGenre" checked name="selected_all" checked onclick="selectAllMovies(this);" >
+                        <label class="form-check-label" for="selectAll">
+                          Select All
+                        </label> 
+                      </li>
+                      <li class="offset-1">
+                        <input class="form-check-input" type="checkbox" value="Drama" id="myGenre" checked name="selected_assets"  onclick="selectMovies(this);" >
+                        <label class="form-check-label"  for="Drama">
+                          Drama
+                        </label> 
+                      </li>
+                      <li class="offset-1">
+                        <input class="form-check-input" type="checkbox" value="Romance" id="myGenre" checked name="selected_assets"  onclick="selectMovies(this);"  >
+                        <label class="form-check-label" for="myLove">
+                          Romance
+                        </label> 
+                      </li>
+                      <li class="offset-1">
+                        <input class="form-check-input" type="checkbox" value="Action" id="myGenre" checked name="selected_assets"  onclick="selectMovies(this);"  >
+                        <label class="form-check-label" for="myLove">
+                          Action
+                        </label> 
+                      </li>
+                      <li class="offset-1">
+                        <input class="form-check-input" type="checkbox" value="Thriller" id="myGenre" checked name="selected_assets"  onclick="selectMovies(this);" >
+                        <label class="form-check-label" for="myLove">
+                          Thriller
+                        </label> 
+                      </li>
+                      <li class="offset-1">
+                        <input class="form-check-input" type="checkbox" value="Music" id="myGenre" checked name="selected_assets"  onclick="selectMovies(this);" >
+                        <label class="form-check-label" for="myLove">
+                          Music
+                        </label> 
+                      </li>
+                      <li class="offset-1">
+                        <input class="form-check-input" type="checkbox" value="Horror" id="myGenre" checked name="selected_assets"  onclick="selectMovies(this);" >
+                        <label class="form-check-label" for="myLove">
+                          Horror
+                        </label> 
+                      </li>
+                      <li class="offset-1">
+                        <input class="form-check-input" type="checkbox" value="Comedy" id="myGenre" checked name="selected_assets" onclick="selectMovies(this);"  >
+                        <label class="form-check-label" for="myLove">
+                          Comedy
+                        </label> 
+                      </li>
+                      <li class="offset-1">
+                        <input class="form-check-input" type="checkbox" value="Fantasy" id="myGenre" checked name="selected_assets"  onclick="selectMovies(this);" >
+                        <label class="form-check-label" for="myLove">
+                          Fantasy
+                        </label> 
+                      </li>
+                      <li class="offset-1">
+                        <input class="form-check-input" type="checkbox" value="Adventure" id="myGenre" checked name="selected_assets" onclick="selectMovies(this);"  >
+                        <label class="form-check-label" for="myLove">
+                          Adventure
+                        </label> 
+                      </li>
+                      <li class="offset-1">
+                        <input class="form-check-input" type="checkbox" value="Biography" id="myGenre" checked name="selected_assets"  onclick="selectMovies(this);" >
+                        <label class="form-check-label" for="myLove">
+                          Biography
+                        </label> 
+                      </li>
+                      <li class="offset-1">
+                        <input class="form-check-input" type="checkbox" value="History" id="myGenre" checked name="selected_assets"  onclick="selectMovies(this);"  >
+                        <label class="form-check-label" for="myLove">
+                          History
+                        </label> 
+                      </li>
+                      <li class="offset-1">
+                        <input class="form-check-input" type="checkbox" value="Sport" id="myGenre" checked name="selected_assets"  onclick="selectMovies(this);" >
+                        <label class="form-check-label" for="myLove">
+                          Sport
+                        </label> 
+                      </li>
+
+
+                    </ul>
+                  </li>
+                  
+                </ul>
+               
+              </div>
+             
+            </div>
+          </nav>
+
+
+          <!------------------------------------------------------------------------------------------------------------------------------------------------------------------>
+
+            <div class="container-fluid " >
+            
+
+              <div class="row bg-secondary text-dark text-center border-bottom border-secondary">
+                  <div class="col-1">MONTH</div>
+                  <div class="col-1">DAY</div>
+                  <div class="col-3">FILM</div>
+                  <div class="col-1">RELEASED</div>
+                  <div class="col-2">RATING</div>
+                  <div class="col-1">LIKE</div>
+                  <div class="col-1">REWATCH</div>
+                  <div class="col-1">REVIEW</div>
+                  <div class="col-1">EDIT</div>
+                  
+              </div>
+
+              <!------------------------------------------------------------------------------------------------------------------------------------------------------------------>
+
+              <div class="row bg-dark text-white-50 border-bottom border-secondary" id="1" >
+                <div class="col-1 text-dark container calendar " id="calendar_1"> 
+                  <div class="col"  >
+                    
+                     <div class="row h5 align-content-center">
+                      <br>
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                       JUN
+                     </div>
+                     <div class="row h6">
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                       2019
+                     </div>
+                  </div>
+                     
+                </div>
+                <div class="col-1 row pt-4 p-4"><h4 >09</h4></div>
+                <div class="col-3 text-white h6 ">
+                  <img src="heGotGame.gif" alt="Logo" style="width:50px;height: 75px;" >&nbsp;&nbsp;
+                  He Got Game
+                  </div>
+                <div class="col-1 h5 pt-4 p-4">1998</div>
+                <div class="col-2 pt-4 p-4">
+                  <a class="navbar-brand col-5" href="#">
+                    <img src="threePointFiveStar.gif" alt="rating" style="width:175px;" class="rounded-pill">
+                  </a>
+                </div>
+                <div class="col-1 pt-4 p-4">
+                  <a class="navbar-brand" href="#">
+                    <img src="like.gif" alt="rating" style="" class="rounded-pill">
+                  </a>
+                </div>
+                <div class="col-1"></div>
+                <div class="col-1"></div>
+                <div class="col-1">
+                  <a class="navbar-brand" href="#">
+                    <img src="edit.gif" alt="rating" style="width: 100px;" >
+                  </a>
+                </div>
+                
+              </div>
+
+              <!------------------------------------------------------------------------------------------------------------------------------------------------------------------>
+
+              <div class="row bg-dark text-white-50 border-bottom border-secondary " id="2">
+                <div class="col-1 text-dark container calendar " id="calendar_2"> 
+                  <div class="col">
+                    
+                     <div class="row h5 align-content-center">
+                      <br>
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                       JUN
+                     </div>
+                     <div class="row h6">
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                       2019
+                     </div>
+                  </div>
+                     
+                </div>
+                <div class="col-1 row pt-4 p-4 "><h4 >08</h4></div>
+                <div class="col-3 text-white h6 ">
+                  <img src="babylon.gif" alt="Logo" style="width:50px;height: 75px;" >&nbsp;&nbsp;
+                  Babylon
+                  </div>
+                <div class="col-1 h5 pt-4 p-4">1980</div>
+                <div class="col-2 pt-4 p-4">
+                  <a class="navbar-brand col-5" href="#">
+                    <img src="fourStar.gif" alt="rating" style="width:175px;" class="rounded-pill">
+                  </a>
+                </div>
+                <div class="col-1 pt-4 p-4">
+                  <a class="navbar-brand" href="#">
+                    <img src="like.gif" alt="rating" style="" class="rounded-pill">
+                  </a>
+                </div>
+                <div class="col-1"></div>
+                <div class="col-1"></div>
+                <div class="col-1">
+                  <a class="navbar-brand" href="#">
+                    <img src="edit.gif" alt="rating" style="width: 100px;" >
+                  </a>
+                </div>
+                
+              </div>
+
+              <!------------------------------------------------------------------------------------------------------------------------------------------------------------------>
+
+              <div class="row bg-dark text-white-50 border-bottom border-secondary " id="3">
+                <div class="col-1 text-dark container calendar " id="calendar_3"> 
+                  <div class="col">
+                    
+                     <div class="row h5 align-content-center">
+                      <br>
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                       JUN
+                     </div>
+                     <div class="row h6">
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                       2019
+                     </div>
+                  </div>
+                     
+                </div>
+                <div class="col-1 row pt-4 p-4 "><h4 >07</h4></div>
+                <div class="col-3 text-white h6 ">
+                  <img src="rockers.gif" alt="Logo" style="width:50px;height: 75px;" >&nbsp;&nbsp;
+                  Rockers
+                  </div>
+                <div class="col-1 h5 pt-4 p-4">1978</div>
+                <div class="col-2 pt-4 p-4">
+                  <a class="navbar-brand col-5" href="#">
+                    <img src="threePointFiveStar.gif" alt="rating" style="width:175px;" class="rounded-pill">
+                  </a>
+                </div>
+                <div class="col-1 pt-4 p-4">
+                  <a class="navbar-brand" href="#">
+                    <img src="like.gif" alt="rating" style="" class="rounded-pill">
+                  </a>
+                </div>
+                <div class="col-1 pt-4 p-4">
+                  <a class="navbar-brand" href="#">
+                    <img src="rewatch.gif" alt="rating" style="" class="rounded-pill">
+                  </a>
+                </div>
+                <div class="col-1"></div>
+                <div class="col-1">
+                  <a class="navbar-brand" href="#">
+                    <img src="edit.gif" alt="rating" style="width: 100px;" >
+                  </a>
+                </div>
+                
+              </div>
+
+              <!------------------------------------------------------------------------------------------------------------------------------------------------------------------>
+
+              <div class="row bg-dark text-white-50 border-bottom border-secondary " id="4">
+                <div class="col-1 text-dark container calendar " id="calendar_4"> 
+                  <div class="col">
+                    
+                     <div class="row h5 align-content-center">
+                      <br>
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                       MAY
+                     </div>
+                     <div class="row h6">
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                       2019
+                     </div>
+                  </div>
+                     
+                </div>
+                <div class="col-1 row pt-4 p-4 "><h4 >26</h4></div>
+                <div class="col-3 text-white h6 ">
+                  <img src="vice.gif" alt="Logo" style="width:50px;height: 75px;" >&nbsp;&nbsp;
+                  Vice
+                  </div>
+                <div class="col-1 h5 pt-4 p-4">2018</div>
+                <div class="col-2 pt-4 p-4">
+                  <a class="navbar-brand col-5" href="#">
+                    <img src="onePointFiveStar.gif" alt="rating" style="width:175px;" class="rounded-pill">
+                  </a>
+                </div>
+                <div class="col-1 pt-4 p-4">
+                  <a class="navbar-brand" href="#">
+                    <img src="notLike.gif" alt="rating" style="" class="rounded-pill">
+                  </a>
+                </div>
+                <div class="col-1 ">
+                  
+                </div>
+                <div class="col-1"></div>
+                <div class="col-1">
+                  <a class="navbar-brand" href="#">
+                    <img src="edit.gif" alt="rating" style="width: 100px;" >
+                  </a>
+                </div>
+                
+              </div>
+
+              <!------------------------------------------------------------------------------------------------------------------------------------------------------------------>
+
+              <div class="row bg-dark text-white-50 border-bottom border-secondary " id="5">
+                <div class="col-1 text-dark container calendar " id="calendar_5"> 
+                  <div class="col">
+                    
+                     <div class="row h5 align-content-center">
+                      <br>
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                       MAY
+                     </div>
+                     <div class="row h6">
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                       2019
+                     </div>
+                  </div>
+                     
+                </div>
+                <div class="col-1 row pt-4 p-4 "><h4 >25</h4></div>
+                <div class="col-3 text-white h6 ">
+                  <img src="magnolia.gif" alt="Logo" style="width:50px;height: 75px;" >&nbsp;&nbsp;
+                  Magnolia
+                  </div>
+                <div class="col-1 h5 pt-4 p-4">1999</div>
+                <div class="col-2 pt-4 p-4">
+                  <a class="navbar-brand col-5" href="#">
+                    <img src="fourPointFiveStar.gif" alt="rating" style="width:175px;" class="rounded-pill">
+                  </a>
+                </div>
+                <div class="col-1 pt-4 p-4">
+                  <a class="navbar-brand" href="#">
+                    <img src="like.gif" alt="rating" style="" class="rounded-pill">
+                  </a>
+                </div>
+                <div class="col-1 ">
+                  
+                </div>
+                <div class="col-1"></div>
+                <div class="col-1">
+                  <a class="navbar-brand" href="#">
+                    <img src="edit.gif" alt="rating" style="width: 100px;" >
+                  </a>
+                </div>
+                
+              </div>
+              
+              <!------------------------------------------------------------------------------------------------------------------------------------------------------------------>
+
+              <div class="row bg-dark text-white-50 border-bottom border-secondary " id="6">
+                <div class="col-1 text-dark container calendar " id="calendar_6"> 
+                  <div class="col">
+                    
+                     <div class="row h5 align-content-center">
+                      <br>
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                       MAY
+                     </div>
+                     <div class="row h6">
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                       2019
+                     </div>
+                  </div>
+                     
+                </div>
+                <div class="col-1 row pt-4 p-4 "><h4 >24</h4></div>
+                <div class="col-3 text-white h6 ">
+                  <img src="crouchingTigerHiddenDragon.gif" alt="Logo" style="width:50px;height: 75px;" >&nbsp;&nbsp;
+                  Crouching Tiger, Hidden Dragon
+                  </div>
+                <div class="col-1 h5 pt-4 p-4">1999</div>
+                <div class="col-2 pt-4 p-4">
+                  <a class="navbar-brand col-5" href="#">
+                    <img src="fiveStar.gif" alt="rating" style="width:175px;" class="rounded-pill">
+                  </a>
+                </div>
+                <div class="col-1 pt-4 p-4">
+                  <a class="navbar-brand" href="#">
+                    <img src="like.gif" alt="rating" style="" class="rounded-pill">
+                  </a>
+                </div>
+                <div class="col-1 pt-4 p-4">
+                  <a class="navbar-brand" href="#">
+                    <img src="rewatch.gif" alt="rating"  class="rounded-pill">
+                  </a>
+                </div>
+                <div class="col-1"></div>
+                <div class="col-1">
+                  <a class="navbar-brand" href="#">
+                    <img src="edit.gif" alt="rating" style="width: 100px;" >
+                  </a>
+                </div>
+                
+              </div>
+              
+              <!------------------------------------------------------------------------------------------------------------------------------------------------------------------>
+
+              <div class="row bg-dark text-white-50 border-bottom border-secondary " id="7">
+                <div class="col-1 text-dark container calendar " id="calendar_7"> 
+                  <div class="col">
+                    
+                     <div class="row h5 align-content-center">
+                      <br>
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                       MAY
+                     </div>
+                     <div class="row h6">
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                       2019
+                     </div>
+                  </div>
+                     
+                </div>
+                <div class="col-1 row pt-4 p-4 "><h4 >05</h4></div>
+                <div class="col-3 text-white h6 ">
+                  <img src="punchDrunkLove.gif" alt="Logo" style="width:50px;height: 75px;" >&nbsp;&nbsp;
+                  Punch-Drunk Love
+                  </div>
+                <div class="col-1 h5 pt-4 p-4">2002</div>
+                <div class="col-2 pt-4 p-4">
+                  <a class="navbar-brand col-5" href="#">
+                    <img src="fourPointFiveStar.gif" alt="rating" style="width:175px;" class="rounded-pill">
+                  </a>
+                </div>
+                <div class="col-1 pt-4 p-4">
+                  <a class="navbar-brand" href="#">
+                    <img src="like.gif" alt="rating" style="" class="rounded-pill">
+                  </a>
+                </div>
+                <div class="col-1 ">
+                 
+                </div>
+                <div class="col-1"></div>
+                <div class="col-1">
+                  <a class="navbar-brand" href="#">
+                    <img src="edit.gif" alt="rating" style="width: 100px;" >
+                  </a>
+                </div>
+                
+              </div>
+              
+              <!------------------------------------------------------------------------------------------------------------------------------------------------------------------>
+
+              <!------------------------------------------------------------------------------------------------------------------------------------------------------------------>
+
+              <div class="row bg-dark text-white-50 border-bottom border-secondary " id="8">
+                <div class="col-1 text-dark container calendar " id="calendar_8"> 
+                  <div class="col">
+                    
+                     <div class="row h5 align-content-center">
+                      <br>
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                       APR
+                     </div>
+                     <div class="row h6">
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                       2019
+                     </div>
+                  </div>
+                     
+                </div>
+                <div class="col-1 row pt-4 p-4 "><h4 >15</h4></div>
+                <div class="col-3 text-white h6 ">
+                  <img src="lordsOfChaos.gif" alt="Logo" style="width:50px;height: 75px;" >&nbsp;&nbsp;
+                  Lords Of Chaos
+                  </div>
+                <div class="col-1 h5 pt-4 p-4">2018</div>
+                <div class="col-2 pt-4 p-4">
+                  <a class="navbar-brand col-5" href="#">
+                    <img src="threeStar.gif" alt="rating" style="width:175px;" class="rounded-pill">
+                  </a>
+                </div>
+                <div class="col-1 pt-4 p-4">
+                  <a class="navbar-brand" href="#">
+                    <img src="notLike.gif" alt="rating" style="" class="rounded-pill">
+                  </a>
+                </div>
+                <div class="col-1 ">
+                 
+                </div>
+                <div class="col-1"></div>
+                <div class="col-1">
+                  <a class="navbar-brand" href="#">
+                    <img src="edit.gif" alt="rating" style="width: 100px;" >
+                  </a>
+                </div>
+                
+              </div>
+              
+              <!------------------------------------------------------------------------------------------------------------------------------------------------------------------>
+
+
+              <div class="row bg-dark text-white-50 border-bottom border-secondary " id="9">
+                <div class="col-1 text-dark container calendar " id="calendar_9"> 
+                  <div class="col">
+                    
+                     <div class="row h5 align-content-center">
+                      <br>
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                       APR
+                     </div>
+                     <div class="row h6">
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                       2019
+                     </div>
+                  </div>
+                     
+                </div>
+                <div class="col-1 row pt-4 p-4 "><h4 >14</h4></div>
+                <div class="col-3 text-white h6 ">
+                  <img src="parisTexas.gif" alt="Logo" style="width:50px;height: 75px;" >&nbsp;&nbsp;
+                  Paris, Texas
+                  </div>
+                <div class="col-1 h5 pt-4 p-4">1984</div>
+                <div class="col-2 pt-4 p-4">
+                  <a class="navbar-brand col-5" href="#">
+                    <img src="fiveStar.gif" alt="rating" style="width:175px;" class="rounded-pill">
+                  </a>
+                </div>
+                <div class="col-1 pt-4 p-4">
+                  <a class="navbar-brand" href="#">
+                    <img src="like.gif" alt="rating" style="" class="rounded-pill">
+                  </a>
+                </div>
+                <div class="col-1 ">
+                 
+                </div>
+                <div class="col-1"></div>
+                <div class="col-1">
+                  <a class="navbar-brand" href="#">
+                    <img src="edit.gif" alt="rating" style="width: 100px;" >
+                  </a>
+                </div>
+                
+              </div>
+              
+              <!------------------------------------------------------------------------------------------------------------------------------------------------------------------>
+
+              <div class="row bg-dark text-white-50 border-bottom border-secondary " id="10">
+                <div class="col-1 text-dark container calendar " id="calendar_10"> 
+                  <div class="col">
+                    
+                     <div class="row h5 align-content-center">
+                      <br>
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                       APR
+                     </div>
+                     <div class="row h6">
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                       2019
+                     </div>
+                  </div>
+                     
+                </div>
+                <div class="col-1 row pt-4 p-4 "><h4 >14</h4></div>
+                <div class="col-3 text-white h6 ">
+                  <img src="oddManOut.gif" alt="Logo" style="width:50px;height: 75px;" >&nbsp;&nbsp;
+                  Odd Man Out
+                  </div>
+                <div class="col-1 h5 pt-4 p-4">1947</div>
+                <div class="col-2 pt-4 p-4">
+                  <a class="navbar-brand col-5" href="#">
+                    <img src="fourPointFiveStar.gif" alt="rating" style="width:175px;" class="rounded-pill">
+                  </a>
+                </div>
+                <div class="col-1 pt-4 p-4">
+                  <a class="navbar-brand" href="#">
+                    <img src="like.gif" alt="rating" style="" class="rounded-pill">
+                  </a>
+                </div>
+                <div class="col-1 ">
+                 
+                </div>
+                <div class="col-1"></div>
+                <div class="col-1">
+                  <a class="navbar-brand" href="#">
+                    <img src="edit.gif" alt="rating" style="width: 100px;" >
+                  </a>
+                </div>
+                
+              </div>
+              
+              <!------------------------------------------------------------------------------------------------------------------------------------------------------------------>
+
+              
+              <div class="row bg-dark text-white-50 border-bottom border-secondary " id="11">
+                <div class="col-1 text-dark container calendar " id="calendar_11"> 
+                  <div class="col">
+                    
+                     <div class="row h5 align-content-center">
+                      <br>
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                       APR
+                     </div>
+                     <div class="row h6">
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                       2019
+                     </div>
+                  </div>
+                     
+                </div>
+                <div class="col-1 row pt-4 p-4 "><h4 >13</h4></div>
+                <div class="col-3 text-white h6 ">
+                  <img src="deathForce.gif" alt="Logo" style="width:50px;height: 75px;" >&nbsp;&nbsp;
+                  Death Force
+                  </div>
+                <div class="col-1 h5 pt-4 p-4">1978</div>
+                <div class="col-2 pt-4 p-4">
+                  <a class="navbar-brand col-5" href="#">
+                    <img src="threeStar.gif" alt="rating" style="width:175px;" class="rounded-pill">
+                  </a>
+                </div>
+                <div class="col-1 pt-4 p-4">
+                  <a class="navbar-brand" href="#">
+                    <img src="like.gif" alt="rating" style="" class="rounded-pill">
+                  </a>
+                </div>
+                <div class="col-1 ">
+                 
+                </div>
+                <div class="col-1"></div>
+                <div class="col-1">
+                  <a class="navbar-brand" href="#">
+                    <img src="edit.gif" alt="rating" style="width: 100px;" >
+                  </a>
+                </div>
+                
+              </div>
+              
+              <!------------------------------------------------------------------------------------------------------------------------------------------------------------------>
+
+              <div class="row bg-dark text-white-50 border-bottom border-secondary " id="12">
+                <div class="col-1 text-dark container calendar " id="calendar_12"> 
+                  <div class="col">
+                    
+                     <div class="row h5 align-content-center">
+                      <br>
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                       APR
+                     </div>
+                     <div class="row h6">
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                       2019
+                     </div>
+                  </div>
+                     
+                </div>
+                <div class="col-1 row pt-4 p-4 "><h4 >05</h4></div>
+                <div class="col-3 text-white h6 ">
+                  <img src="daysOfHeaven.gif" alt="Logo" style="width:50px;height: 75px;" >&nbsp;&nbsp;
+                  Days Of Heaven
+                  </div>
+                <div class="col-1 h5 pt-4 p-4">1978</div>
+                <div class="col-2 pt-4 p-4">
+                  <a class="navbar-brand col-5" href="#">
+                    <img src="threePointFiveStar.gif" alt="rating" style="width:175px;" class="rounded-pill">
+                  </a>
+                </div>
+                <div class="col-1 pt-4 p-4">
+                  <a class="navbar-brand" href="#">
+                    <img src="like.gif" alt="rating" style="" class="rounded-pill">
+                  </a>
+                </div>
+                <div class="col-1 ">
+                 
+                </div>
+                <div class="col-1"></div>
+                <div class="col-1">
+                  <a class="navbar-brand" href="#">
+                    <img src="edit.gif" alt="rating" style="width: 100px;" >
+                  </a>
+                </div>
+                
+              </div>
+              
+              <!------------------------------------------------------------------------------------------------------------------------------------------------------------------>
+
+              
+              
+             
+            </div>
+        </div>
+    </body>
+</html>
