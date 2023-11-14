@@ -35,8 +35,10 @@
                                   ["Days Of Heaven", 2]
                                 ]);
 
+          var resetSearchFilter = false;
+         
           function selectAllMovies(checkboxArray){
-          
+            
              var selectAllcheckbox = document.querySelector("Input[id = 'selectAllGenre']") ;
              var checkboxes = document.querySelectorAll("Input[id = 'myGenre']") ;
              
@@ -104,6 +106,14 @@
           }
 
           function selectMovies(checkboxGenre){
+          
+            if(resetSearchFilter){
+              resetSearchFilter=false;
+              var selectAllcheckbox = document.querySelector("Input[id = 'selectAllGenre']") ;
+              selectAllcheckbox.checked=false;
+              selectAllMovies(selectAllcheckbox)
+              checkboxGenre.checked=true;
+            }
       
              var selectAllcheckbox = document.querySelector("Input[id = 'selectAllGenre']") ;
              var checkboxes = document.querySelectorAll("Input[id = 'myGenre']") ;
@@ -127,39 +137,64 @@
               
            
                 if(genrePresent){
-                    
+                  var calendarDivId="calendar_"+(i+1);
+                  var calendarId = calendarData[movieName];
                     if(checkboxGenre.checked==true){
                       genreFilters.set(movieName,genreFilters.get(movieName)+1);
                       document.getElementById(movieIds[movieName]).hidden = false;
                     }else if(genreFilters.get(movieName)==1){
                       genreFilters.set(movieName,genreFilters.get(movieName)-1);
                       document.getElementById(movieIds[movieName]).hidden = true;
+                      if(document.getElementById(calendarDivId).style.visibility=="visible"){
+                        calendarArray = calendarArray.filter(item => item !== calendarId);  
+                      }
                     }else{
                       genreFilters.set(movieName,genreFilters.get(movieName)-1);
                     }
                     
-
+                    
                     if(checkboxGenre.checked==true){
-                      var calendarId = calendarData[movieName];
-                      var calendarDivId="calendar_"+(i+1);
+                      
+                     
                       if(calendarArray.includes(calendarId)){
                         document.getElementById(calendarDivId).style.visibility="hidden";
+                        
                       }else{
                         calendarArray.push(calendarId);
                         document.getElementById(calendarDivId).style.visibility="visible";
                       }
+                     
 
                     }
                 }else{
-   
+                   
                 }
                 let text = "";
                 for (const x of genreFilters.entries()) {
                   text += x + " ";
                 }
-
-                console.log("Genric filter count "+text);
+               
+                
+                
             }
+            calendarArray = [];
+              for (var i = 0; i < movieList.length; i++) {
+                var movieName = movieList[i];
+                  var calendarDivId="calendar_"+(i+1);
+                  var calendarId = calendarData[movieName];
+                  if(document.getElementById(movieIds[movieName]).hidden == false){
+                    if(calendarArray.includes(calendarId)){
+                      //  document.getElementById(calendarDivId).style.visibility="hidden";
+                        
+                      }else{
+                        calendarArray.push(calendarId);
+                        document.getElementById(calendarDivId).style.visibility="visible";
+                      }
+                  }  
+                  }  
+                  
+
+          
 
           }
 
@@ -195,6 +230,7 @@
                     document.getElementById(movieIds[movieName]).hidden = true;
                 }
             }
+            resetSearchFilter=true;
           }
           function moviePageLoad(){
        
@@ -390,14 +426,14 @@
                     <a class="nav-link text-success" href="#">RATINGS</a>
                   </li>
                  
-                  <li class="nav-item dropdown" style="padding-left: 100px">
+                  <li class="nav-item dropdown " style="padding-left: 100px">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                       Genre
                     </a>
-                    <ul class="dropdown-menu " aria-labelledby="navbarDropdown">
+                    <ul class="dropdown-menu " aria-labelledby="navbarDropdown" style="margin-left: 100px;">
                       <li>
                         <input class="form-check-input" type="checkbox" value="1" id="selectAllGenre" checked name="selected_all" checked onclick="selectAllMovies(this);" >
-                        <label class="form-check-label" for="selectAll">
+                        <label class="form-check-label" for="selectAll" >
                           Select All
                         </label> 
                       </li>
